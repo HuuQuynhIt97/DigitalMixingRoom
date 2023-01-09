@@ -15,15 +15,14 @@
           ],
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "../dmr-api/wwwroot/ClientApp",
+            "outputPath": "ClientAppQRNew",
             "index": "src/index.html",
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
-              "src/web.config",
-              "src/environments"
+              "src/web.config"
             ],
             "styles": [
               "src/scss/style.scss"
@@ -74,6 +73,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "dmr-app:build"
+            //"proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {

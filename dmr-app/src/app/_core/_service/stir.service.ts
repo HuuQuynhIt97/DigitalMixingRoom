@@ -29,9 +29,7 @@ export class StirService implements OnDestroy {
     this.receiveAmount = new BehaviorSubject<{ stirScaleID: any, rpm: any}>(null);
   }
   ngOnDestroy() {
-    console.log('Stir Service destroy');
     this.numberOfAttempts = 0;
-    
   }
 
   public connect = () => {

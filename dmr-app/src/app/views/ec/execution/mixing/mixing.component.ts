@@ -1,35 +1,31 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { IBuilding } from 'src/app/_core/_model/building';
-import { IIngredient } from 'src/app/_core/_model/summary';
-import { AbnormalService } from 'src/app/_core/_service/abnormal.service';
-import { AlertifyService } from 'src/app/_core/_service/alertify.service';
-import { IngredientService } from 'src/app/_core/_service/ingredient.service';
-import { MakeGlueService } from 'src/app/_core/_service/make-glue.service';
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
+import { HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr'
+import { Observable, Subject, Subscription } from 'rxjs'
+import { IBuilding } from 'src/app/_core/_model/building'
+import { IIngredient } from 'src/app/_core/_model/summary'
+import { AbnormalService } from 'src/app/_core/_service/abnormal.service'
+import { AlertifyService } from 'src/app/_core/_service/alertify.service'
+import { IngredientService } from 'src/app/_core/_service/ingredient.service'
+import { MakeGlueService } from 'src/app/_core/_service/make-glue.service'
+import { NgxSpinnerService } from 'ngx-spinner'
+import { debounceTime } from 'rxjs/operators'
+import { MixingService } from 'src/app/_core/_service/mixing.service'
+import { IMixingDetailForResponse } from 'src/app/_core/_model/IMixingInfo'
+import { IScanner } from 'src/app/_core/_model/IToDoList'
+import { IMixingInfo } from 'src/app/_core/_model/plan'
+import { IRole } from 'src/app/_core/_model/role'
+import { SettingService } from 'src/app/_core/_service/setting.service'
+import { TodolistService } from 'src/app/_core/_service/todolist.service'
+import { environment } from 'src/environments/environment'
+
+import { AutoSelectDirective } from '../../select.directive'
+
 // import * as signalr from '../../../../assets/js/ec-client.js';
 // import * as signalr from '../../../../assets/js/weighing-scale-client.js';
-import { NgxSpinnerService } from 'ngx-spinner';
-
-import { debounceTime } from 'rxjs/operators';
-import { MixingService } from 'src/app/_core/_service/mixing.service';
-import { AutoSelectDirective } from '../../select.directive';
-import { IMixingDetailForResponse } from 'src/app/_core/_model/IMixingInfo';
-import { IScanner } from 'src/app/_core/_model/IToDoList';
-import { IMixingInfo } from 'src/app/_core/_model/plan';
-import { IRole } from 'src/app/_core/_model/role';
-import { SettingService } from 'src/app/_core/_service/setting.service';
-import { TodolistService } from 'src/app/_core/_service/todolist.service';
-import { environment } from 'src/environments/environment';
-
-const SUMMARY_RECIEVE_SIGNALR = 'ok';
 const BIG_MACHINE_UNIT = 'k';
 const SMALL_MACHINE_UNIT = 'g';
-const BUILDING_LEVEL = 2;
 declare var $: any;
-const ADMIN = 1;
-const SUPERVISOR = 2;
 const CONNECTION_WEIGHING_SCALE_HUB = new HubConnectionBuilder()
   .withUrl(environment.scalingHubLocal)
   .withAutomaticReconnect([1000, 3000, 5000, 10000, 30000])
@@ -57,12 +53,6 @@ export class MixingComponent implements OnInit, OnDestroy {
   buildingID: number;
   scalingKG: string;
   volume: number;
-  volumeA: number;
-  volumeB: any;
-  volumeC: any;
-  volumeD: any;
-  volumeE: any;
-  volumeH: any;
   B: number;
   C: number;
   D: number;
@@ -72,19 +62,16 @@ export class MixingComponent implements OnInit, OnDestroy {
   startTime: any;
   glueName: string;
   role: IRole;
-  estimatedTime: any;
   estimatedStartTime: any;
   estimatedFinishTime: any;
   stdcon: number;
   subject = new Subject<IScanner>();
   subscription: Subscription[] = [];
   detail: IMixingDetailForResponse;
-  scaleStatus = true;
   checkedSmallScale: boolean;
   tab: string;
-  status: boolean = true
+  scaleStatus: boolean = true
   BUIDLING_ID = 0;
-  kgOver: boolean
   constructor(
     private route: ActivatedRoute,
     private alertify: AlertifyService,
@@ -147,35 +134,50 @@ export class MixingComponent implements OnInit, OnDestroy {
       .subscribe(async (arg) => {
         const args = arg.QRCode;
         const item = arg.ingredient;
+        console.log(item);
         this.ingredientsTamp = item;
         this.position = item.position;
-        const input = args.split('-') || [];
-        const dateAndBatch = /(\d+)-(\w+)-/g;
-        const qr = args.match(item.materialNO);
-        const validFormat = args.match(dateAndBatch);
-        const qrcode = args.replace(validFormat[0], '');
+
+        // Update 08/04/2021 - Leo
+        const input = args.split('    ') || [];
+        console.log('input-scan',input);
+
+        const qr = item.partNO;
+        console.log('qr-system', qr);
+
+        var qrcode = null
+        try {
+          qrcode = input[2].split(":")[1].trim() + ':' + input[0].split(":")[1].trim().replace(' ', '').toUpperCase();
+          console.log('qrcode',qrcode);
+        } catch (error) {
+          qrcode = null
+        }
+
+        //console.log(qrcode);
+        // const qr = args.match(item.materialNO);
+        // End update
         if (qr === null) {
           this.alertify.warning(`Mã QR không hợp lệ!<br>The QR Code invalid!`);
           this.qrCode = '';
-          this.status = false;
           this.errorScan();
+          this.offSignalr();
           return;
         }
         if (qr !== null) {
           try {
             // check neu batch va code giong nhau
-            if (qrcode !== qr[0]) {
+            if (qrcode !== qr) {
               this.alertify.warning(`Mã QR không hợp lệ!<br>Please you should look for the chemical name "${item.name}"`);
               this.qrCode = '';
-              this.status = false;
+              this.scaleStatus = false;
               this.errorScan();
               return;
             }
-            this.qrCode = qr[0];
-            if (this.qrCode !== item.materialNO) {
+            this.qrCode = qr;
+            if (this.qrCode !== item.partNO) {
               this.alertify.warning(`Mã QR không hợp lệ!<br>Please you should look for the chemical name "${item.name}"`);
               this.qrCode = '';
-              this.status = false;
+              this.scaleStatus = false;
               this.errorScan();
               return;
             }
@@ -194,18 +196,18 @@ export class MixingComponent implements OnInit, OnDestroy {
             if (checkLock === true) {
               this.alertify.error('Hóa chất này đã bị khóa!<br>This chemical has been locked!');
               this.qrCode = '';
-              this.status = false;
+              this.scaleStatus = false;
               this.errorScan();
               return;
             }
 
             /// Khi quét qr-code thì chạy signal
 
-            const code = item.code;
+            const code = item.partNO;
             const ingredient = this.findIngredientCode(code);
             this.setBatch(ingredient, input[1]);
             if (ingredient) {
-              this.status = true
+              this.scaleStatus = true
               this.signal();
               this.changeInfo('success-scan', ingredient.code);
               if (ingredient.expected === 0 && ingredient.position === 'A') {
@@ -256,7 +258,6 @@ export class MixingComponent implements OnInit, OnDestroy {
 
   private signal() {
     this.mixingService.receiveAmount.subscribe(res => {
-      console.log(res);
       const unit = res.unit;
       const scalingMachineID = res.weighingScaleID;
       const message = res.amount;
@@ -270,7 +271,7 @@ export class MixingComponent implements OnInit, OnDestroy {
             this.checkValidPosition(this.ingredientsTamp, this.volume);
             break;
           case 'B':
-            if (this.status) {
+            if (this.scaleStatus) {
               if (unit !== SMALL_MACHINE_UNIT) {
                 // update realA
                 this.changeActualByPosition('B', this.volume, unit);
@@ -282,27 +283,27 @@ export class MixingComponent implements OnInit, OnDestroy {
               break;
             }
           case 'C':
-            if (this.status) {
+            if (this.scaleStatus) {
               this.changeActualByPosition('C', this.volume, unit);
               this.checkValidPosition(this.ingredientsTamp, this.volume);
               break;
             }
           case 'D':
-            if (this.status) {
+            if (this.scaleStatus) {
               this.changeActualByPosition('D', this.volume, unit);
               this.checkValidPosition(this.ingredientsTamp, this.volume);
               break;
             }
           case 'E':
-            if (this.status) {
+            if (this.scaleStatus) {
               this.changeActualByPosition('E', this.volume, unit);
               this.checkValidPosition(this.ingredientsTamp, this.volume);
               break;
             }
           case 'H':
-            if (this.status) {
-              this.changeActualByPosition('E', this.volumeH, unit);
-              this.checkValidPosition(this.ingredientsTamp, this.volumeH);
+            if (this.scaleStatus) {
+              this.changeActualByPosition('H', this.volume, unit);
+              this.checkValidPosition(this.ingredientsTamp, this.volume);
               break;
             }
         }
@@ -343,6 +344,7 @@ export class MixingComponent implements OnInit, OnDestroy {
             focusExpected: false,
             valid: false,
             info: '',
+            partNO: item.partNO,
             batch: '',
             unit: '',
             time_start: new Date() // leo update 11:13 AM 2/2/2021
@@ -364,7 +366,7 @@ export class MixingComponent implements OnInit, OnDestroy {
   // helpers
   private findIngredientCode(code) {
     for (const item of this.ingredients) {
-      if (item.code === code) {
+      if (item.partNO === code) {
         return item;
       }
     }
@@ -484,13 +486,8 @@ export class MixingComponent implements OnInit, OnDestroy {
         expected / 1000,
         this.findIngredient(position)?.allow
       );
-      //sai so
-      const min = expected;
+      const min = expected - allow;
       const max = expected + allow;
-      console.log('expected',expected);
-      console.log('allow',allow);
-      console.log('min',min);
-      console.log('max',max);
       const minRange = this.toFixedIfNecessary(min / 1000, 3);
       const maxRange = this.toFixedIfNecessary(max / 1000, 3);
       const expectedRange =
@@ -590,7 +587,6 @@ export class MixingComponent implements OnInit, OnDestroy {
     if (ingredient.position === 'B') {
       if (max > 2) {
         this.scalingKG = BIG_MACHINE_UNIT;
-        this.kgOver = true
         if (currentValue <= max && currentValue >= min) {
           this.changeScanStatusFocus('B', false);
           this.changeScanStatusFocus('C', true);
@@ -607,7 +603,6 @@ export class MixingComponent implements OnInit, OnDestroy {
         }
       } else {
         this.scalingKG = SMALL_MACHINE_UNIT;
-        this.kgOver = false
         if (currentValue <= maxG && currentValue >= minG) {
           this.changeScanStatusFocus('B', false);
           this.changeScanStatusFocus('C', true);
@@ -629,7 +624,6 @@ export class MixingComponent implements OnInit, OnDestroy {
     if (ingredient.position === 'C') {
       if (max > 2) {
         this.scalingKG = BIG_MACHINE_UNIT;
-        this.kgOver = true
         if (currentValue <= max && currentValue >= min) {
           this.changeScanStatusFocus('C', false);
           this.changeScanStatusFocus('D', true);
@@ -646,7 +640,6 @@ export class MixingComponent implements OnInit, OnDestroy {
         }
       } else {
         this.scalingKG = SMALL_MACHINE_UNIT;
-        this.kgOver = false
         if (currentValue <= maxG && currentValue >= minG) {
           this.changeScanStatusFocus('C', false);
           this.changeScanStatusFocus('D', true);
@@ -668,7 +661,6 @@ export class MixingComponent implements OnInit, OnDestroy {
     if (ingredient.position === 'D') {
       if (max > 2) {
         this.scalingKG = BIG_MACHINE_UNIT;
-        this.kgOver = true
         if (currentValue <= max && currentValue >= min) {
           this.changeScanStatusFocus('D', false);
           this.changeScanStatusFocus('E', true);
@@ -685,7 +677,6 @@ export class MixingComponent implements OnInit, OnDestroy {
         }
       } else {
         this.scalingKG = SMALL_MACHINE_UNIT;
-        this.kgOver = false
         if (currentValue <= maxG && currentValue >= minG) {
           this.changeScanStatusFocus('D', false);
           this.changeScanStatusFocus('E', true);
@@ -706,7 +697,6 @@ export class MixingComponent implements OnInit, OnDestroy {
     if (ingredient.position === 'E') {
       if (max > 2) {
         this.scalingKG = BIG_MACHINE_UNIT;
-        this.kgOver = true
         if (currentValue <= max && currentValue >= min) {
           this.changeScanStatusFocus('D', false);
           this.changeScanStatusFocus('E', true);
@@ -723,7 +713,6 @@ export class MixingComponent implements OnInit, OnDestroy {
         }
       } else {
         this.scalingKG = SMALL_MACHINE_UNIT;
-        this.kgOver = false
         if (currentValue <= maxG && currentValue >= minG) {
           this.changeScanStatusFocus('D', false);
           this.changeScanStatusFocus('E', true);
@@ -779,7 +768,6 @@ export class MixingComponent implements OnInit, OnDestroy {
     let maxG;
     const args = parseFloat(data.target.value);
     const currentValue = args;
-
     if (ingredient.allow === 0) {
       const pattern = /^[0-9.]+[kg]+\s\+\s[0-9.]+[kg]+|(^[0-9.]+[kg]+)/g;
       const checkFormat = ingredient.expected.toString().match(pattern);
@@ -969,9 +957,7 @@ export class MixingComponent implements OnInit, OnDestroy {
         }
       }
     }
-
     this.changeReal(ingredient.code, args);
-
   }
 
   realClass(item) {
@@ -1094,7 +1080,6 @@ export class MixingComponent implements OnInit, OnDestroy {
         time_start: item.time_start // Thêm bởi Quỳnh (2/2/2021 11:46)
       };
     });
-
     const mixing = {
       glueID: this.glueID,
       glueName: this.glueName,
@@ -1102,11 +1087,10 @@ export class MixingComponent implements OnInit, OnDestroy {
       mixBy: JSON.parse(localStorage.getItem('user')).user.id,
       estimatedStartTime: this.estimatedStartTime,
       estimatedFinishTime: this.estimatedFinishTime,
-      startTime: new Date(),
-      endTime: new Date(),
+      startTime: this.startTime.toISOString(),
+      endTime: this.endTime.toISOString(),
       details
     };
-
     if (mixing) {
       this.makeGlueService.add(mixing).subscribe((glue: any) => {
         this.todolistService.setValue(false);
@@ -1122,5 +1106,4 @@ export class MixingComponent implements OnInit, OnDestroy {
     const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
     return localISOTime;
   }
-
 }

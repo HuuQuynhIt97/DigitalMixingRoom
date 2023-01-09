@@ -155,7 +155,6 @@ export class BuildingSettingComponent implements OnInit {
     try {
       this.buildings = await this.getBuildingForSetting() as [];
       this.glueTypes = ((await this.getAllGlueType()) as []).filter( (item: any) => item.level === 1);
-      console.log(this.glueTypes);
     } catch (error) {
       this.alertify.error(error + '');
     }

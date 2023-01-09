@@ -297,81 +297,81 @@
     <!-- end Dispatch -->
 
     <!-- EVA_UV -->
-      <div class="card-body p-0">
-        <ejs-grid #gridDispatch id="gridEVAUV" *ngIf="isShowTab === EVA_UV"
-          [dataSource]='EVAUVData' [searchSettings]="searchSettings" showColumnMenu='true' [allowExcelExport]='true'
-          allowSorting='true' allowResizing='true' gridLines='Both' (actionBegin)="actionBegin($event)"
-          (actionComplete)="actionComplete($event)" height='600' (toolbarClick)='toolbarClick($event)'
-          (created)='createdDispatchGrid()' (dataBound)='dataBound()' (rowDataBound)='rowDBDispatch($event)'
-          (recordDoubleClick)='onDoubleClick($event)'>
-          <e-columns>
-            <e-column field='supplier' headerText='Supplier' width='100' textAlign='Center'>
-              <ng-template #headerTemplate>
-                {{ 'Supplier' | translate }}
-              </ng-template>
-            </e-column>
-            <e-column field='glueName' headerText='Glue' width='170' textAlign='Left'>
-              <ng-template #headerTemplate>
-                {{ 'Glue' | translate }}
-              </ng-template>
-              <ng-template #template let-data>
-                <ejs-tooltip #tooltip class="fix-css" position='RightCenter'
-                  (beforeRender)="onBeforeRender($event, data, data.index)" content="loading...">
-                  {{data.glueName}}
-                </ejs-tooltip>
-              </ng-template>
-            </e-column>
-            <e-column field='lines' headerText='Line' width='300' textAlign='Left'>
-              <ng-template #headerTemplate>
-                {{ 'Line' | translate }}
-              </ng-template>
-              <ng-template #template let-data>
-                {{data.lineNames.join(', ')}}
-              </ng-template>
-            </e-column>
-            <e-column field='estimatedStartTime' type='date' format='HH:mm' headerText='EST' width='100' textAlign='Center'>
-              <ng-template #headerTemplate>
-                <ejs-tooltip [content]="'EST_Tooltip' | translate">
-                  {{ 'EST' | translate }}
-                </ejs-tooltip>
-              </ng-template>
+    <div class="card-body p-0">
+      <ejs-grid #gridDispatch id="gridEVAUV" *ngIf="isShowTab === EVA_UV"
+        [dataSource]='EVAUVData' [searchSettings]="searchSettings" showColumnMenu='true' [allowExcelExport]='true'
+        allowSorting='true' allowResizing='true' gridLines='Both' (actionBegin)="actionBegin($event)"
+        (actionComplete)="actionComplete($event)" height='600' (toolbarClick)='toolbarClick($event)'
+        (created)='createdDispatchGrid()' (dataBound)='dataBound()' (rowDataBound)='rowDBDispatch($event)'
+        (recordDoubleClick)='onDoubleClick($event)'>
+        <e-columns>
+          <e-column field='supplier' headerText='Supplier' width='100' textAlign='Center'>
+            <ng-template #headerTemplate>
+              {{ 'Supplier' | translate }}
+            </ng-template>
+          </e-column>
+          <e-column field='glueName' headerText='Glue' width='170' textAlign='Left'>
+            <ng-template #headerTemplate>
+              {{ 'Glue' | translate }}
+            </ng-template>
+            <ng-template #template let-data>
+              <ejs-tooltip #tooltip class="fix-css" position='RightCenter'
+                (beforeRender)="onBeforeRender($event, data, data.index)" content="loading...">
+                {{data.glueName}}
+              </ejs-tooltip>
+            </ng-template>
+          </e-column>
+          <e-column field='lines' headerText='Line' width='300' textAlign='Left'>
+            <ng-template #headerTemplate>
+              {{ 'Line' | translate }}
+            </ng-template>
+            <ng-template #template let-data>
+              {{data.lineNames.join(', ')}}
+            </ng-template>
+          </e-column>
+          <e-column field='estimatedStartTime' type='date' format='HH:mm' headerText='EST' width='100' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'EST_Tooltip' | translate">
+                {{ 'EST' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+              N/A
+            </ng-template>
+          </e-column>
+          <e-column field='estimatedFinishTime' type='date' format='HH:mm' headerText='EFT' width='100' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'EFT_Tooltip' | translate">
+                {{ 'EFT' | translate }}
+              </ejs-tooltip>
+            </ng-template>
               <ng-template #template let-data>
                 N/A
               </ng-template>
-            </e-column>
-            <e-column field='estimatedFinishTime' type='date' format='HH:mm' headerText='EFT' width='100' textAlign='Center'>
-              <ng-template #headerTemplate>
-                <ejs-tooltip [content]="'EFT_Tooltip' | translate">
-                  {{ 'EFT' | translate }}
-                </ejs-tooltip>
-              </ng-template>
-                <ng-template #template let-data>
-                  N/A
-                </ng-template>
-            </e-column>
-            <e-column field='option' headerText='Option' width='220' textAlign='Center'>
-              <ng-template #headerTemplate>
-                {{ 'Option' | translate }}
-              </ng-template>
-              <ng-template #template let-data>
-                <div style="text-align: left;">
-                  <div class="btn-group">
-                    <button type="button" (click)='openSubpackage(data)' class="btn btn-sm btn-secondary">
-                      <i class="fa fa-print"></i>
-                      {{ 'Subpackage' }}
-                    </button>
-                    <button type="button" (click)='openDispatchEVAUV(data)'
-                      class="btn btn-sm btn-info ml-1">
-                      <i class="fas fa-balance-scale"></i>
-                      {{ 'Dispatch' | translate }}
-                    </button>
-                  </div>
+          </e-column>
+          <e-column field='option' headerText='Option' width='220' textAlign='Center'>
+            <ng-template #headerTemplate>
+              {{ 'Option' | translate }}
+            </ng-template>
+            <ng-template #template let-data>
+              <div style="text-align: left;">
+                <div class="btn-group">
+                  <button type="button" (click)='openSubpackage(data)' class="btn btn-sm btn-secondary">
+                    <i class="fa fa-print"></i>
+                    {{ 'Subpackage' }}
+                  </button>
+                  <button type="button" (click)='openDispatchEVAUV(data)'
+                    class="btn btn-sm btn-info ml-1">
+                    <i class="fas fa-balance-scale"></i>
+                    {{ 'Dispatch' | translate }}
+                  </button>
                 </div>
-              </ng-template>
-            </e-column>
-          </e-columns>
-        </ejs-grid>
-      </div>
+              </div>
+            </ng-template>
+          </e-column>
+        </e-columns>
+      </ejs-grid>
+    </div>
     <!-- end EVA_UV -->
 
     <!--  Done -->
@@ -441,15 +441,14 @@
               </ejs-tooltip>
             </ng-template>
             <ng-template #template let-data>
-
-                <div *ngIf="data.jobType == 1">
-                  {{data.glueName.indexOf(' + ') === -1 || data.finishMixingTime === null || data.finishMixingTime ===
-                  "0001-01-01T00:00:00" ? 'N/A':
-                  data.finishMixingTime | date: 'HH:mm'}}
-                </div>
-                  <div *ngIf="data.jobType == 2">
-                    -
-                  </div>
+              <div *ngIf="data.jobType == 1">
+                {{data.glueName.indexOf(' + ') === -1 || data.finishMixingTime === null || data.finishMixingTime ===
+                "0001-01-01T00:00:00" ? 'N/A':
+                data.finishMixingTime | date: 'HH:mm'}}
+              </div>
+              <div *ngIf="data.jobType == 2">
+                -
+              </div>
             </ng-template>
           </e-column>
 
@@ -461,24 +460,24 @@
             </ng-template>
             <ng-template #template let-data>
               <div *ngIf="data.jobType == 1">
-                  <ng-container *ngIf="data.glueName.indexOf(' + ') !== -1 && data.mixedConsumption < 1 ;else second">
-                    {{'Manual' | translate}}
+                <ng-container *ngIf="data.glueName.indexOf(' + ') !== -1 && data.mixedConsumption < 1 ;else second">
+                  {{'Manual' | translate}}
+                </ng-container>
+                <ng-template #second>
+                  <ng-container
+                    *ngIf="data.glueName.indexOf(' + ') !== -1 && data.startStirTime !== null && data.finishStirTime !== null && data.mixedConsumption >= 1; else third">
+                    {{data.startStirTime | date: 'HH:mm'}}
                   </ng-container>
-                  <ng-template #second>
-                    <ng-container
-                      *ngIf="data.glueName.indexOf(' + ') !== -1 && data.startStirTime !== null && data.finishStirTime !== null && data.mixedConsumption >= 1; else third">
-                      {{data.startStirTime | date: 'HH:mm'}}
-                    </ng-container>
-                  </ng-template>
-                  <ng-template #third>
-                    <ng-container
-                      *ngIf="data.glueName.indexOf(' + ') !== -1 && data.startStirTime === null && data.mixedConsumption >= 1;else four">
-                      Error
-                    </ng-container>
-                  </ng-template>
-                  <ng-template #four>
-                    N/A
-                  </ng-template>
+                </ng-template>
+                <ng-template #third>
+                  <ng-container
+                    *ngIf="data.glueName.indexOf(' + ') !== -1 && data.startStirTime === null && data.mixedConsumption >= 1;else four">
+                    Error
+                  </ng-container>
+                </ng-template>
+                <ng-template #four>
+                  N/A
+                </ng-template>
               </div>
               <div *ngIf="data.jobType == 2">
                 -

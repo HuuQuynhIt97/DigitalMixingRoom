@@ -136,9 +136,9 @@ export class BuildingComponent extends BaseComponent implements OnInit {
       'Are you sure you want to delete this BuildingID "' + id + '" ?',
       () => {
         this.buildingService.delete(id).subscribe(res => {
-          this.alertify.success('The building has been deleted!!!');
-          // this.treeGridObj.refresh();
           this.getBuildingsAsTreeView();
+          this.treeGridObj.refresh();
+          this.alertify.success('The building has been deleted!!!');
         },
         error => {
           this.alertify.error('Failed to delete the building!!!');

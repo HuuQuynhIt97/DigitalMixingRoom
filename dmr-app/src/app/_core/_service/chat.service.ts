@@ -16,7 +16,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class ChatService {
-  baseUrl = environment.api_login_Url;
+  baseUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
   getProjects(keyword = '') {
     return this.http.get(`${this.baseUrl}Projects/GetAllPaging/1/1000/${keyword}`).pipe(

@@ -273,27 +273,37 @@ export class PlanComponent extends BaseComponent implements OnInit, OnDestroy {
       finishWorkingTime: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 16, 30, 0),
       listAdd: this.dataPicked
     }
-    this.planService.createForStopLine(obj).subscribe(res => {
-      if (res) {
-        this.alertify.success('Tạo thành công!<br>Created succeeded!');
-        this.getAll();
-        this.achievementRate();
-        this.modalReference.close();
-        this.dataPicked = []
-        this.getAllLine(this.buildingID);
-      } else {
-        this.alertify.warning('Dữ liệu đã tồn tại! <br>This plan has already existed!!!');
-        this.getAll();
-      }
-    }, error => {
-      this.alertify.error(error, true);
-      this.grid.refresh();
-      this.getAll();
-      this.getAllLine(this.buildingID);
-      this.dataPicked = []
-      this.clearForm();
-    });
+    console.log(this.dataPicked);
+    // this.planService.createForStopLine(obj).subscribe(res => {
+    //   if (res) {
+    //     this.alertify.success('Tạo thành công!<br>Created succeeded!');
+    //     this.getAll();
+    //     this.achievementRate();
+    //     this.modalReference.close();
+    //     this.dataPicked = []
+    //     this.getAllLine(this.buildingID);
+    //   } else {
+    //     this.alertify.warning('Dữ liệu đã tồn tại! <br>This plan has already existed!!!');
+    //     this.getAll();
+    //   }
+    // }, error => {
+    //   this.alertify.error(error, true);
+    //   this.grid.refresh();
+    //   this.getAll();
+    //   this.getAllLine(this.buildingID);
+    //   this.dataPicked = []
+    //   this.clearForm();
+    // });
     // this.planService.create(this.dataPicked)
+  }
+
+  StoplineDateOnchange(args) {
+    this.StoplineDate = (args.value as Date);
+    if(this.dataPicked.length > 0) {
+      for (const item of this.dataPicked) {
+        item.dueDate = this.StoplineDate
+      }
+    }
   }
 
   rowSelected(args) {
@@ -470,7 +480,6 @@ export class PlanComponent extends BaseComponent implements OnInit, OnDestroy {
       });
       this.toolbarOptions = uniqueOptionItem;
     }
-    console.log(this.toolbarOptions);
   }
 
   makeAction(input: string): any[] {
@@ -554,6 +563,7 @@ export class PlanComponent extends BaseComponent implements OnInit, OnDestroy {
 
   achievementRate() {
     this.planService.achievementRate(this.buildingID).subscribe((res: any) => {
+      console.log(res);
       this.planInfo = res.data;
     });
   }
@@ -1084,14 +1094,7 @@ export class PlanComponent extends BaseComponent implements OnInit, OnDestroy {
     this.search(this.startDate, this.endDate);
   }
 
-  StoplineDateOnchange(args) {
-    this.StoplineDate = (args.value as Date);
-    if(this.dataPicked.length > 0) {
-      for (const item of this.dataPicked) {
-        item.dueDate = this.StoplineDate
-      }
-    }
-  }
+
 
   tooltipContext(data) {
 

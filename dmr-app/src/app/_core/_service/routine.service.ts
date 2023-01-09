@@ -16,7 +16,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class RoutineService {
-  baseUrl = environment.api_login_Url;
+  baseUrl = environment.apiUrl;
   constructor(private http: HttpClient) {}
   getOCs(): Observable<Array<Oc>> {
     return this.http.get<Oc[]>(this.baseUrl + 'Ocs/GetListTree').pipe(

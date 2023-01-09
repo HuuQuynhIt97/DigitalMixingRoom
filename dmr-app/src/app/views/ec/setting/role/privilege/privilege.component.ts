@@ -36,7 +36,6 @@ export class PrivilegeComponent implements OnInit {
   }
   getAllRole() {
     this.roleService.getAll().subscribe(res => {
-      console.log('getAllRole', res);
       this.data = res;
     });
   }
@@ -115,7 +114,6 @@ export class PrivilegeComponent implements OnInit {
 
   getScreenFunctionAndAction() {
     this.roleService.getScreenFunctionAndAction(this.roleIDs === [] ? [0] : this.roleIDs).subscribe((data: any) => {
-      console.log('getScreenFunctionAndAction',data);
       this.modules = data;
     });
   }

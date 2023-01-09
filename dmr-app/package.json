@@ -20,7 +20,7 @@
   "scripts": {
     "start": "ng serve --open --disable-host-check",
     "dev_henry": "ng serve --open --host 10.4.4.224 --port 1000 --disable-host-check",
-    "leo": "ng serve --open --host 10.4.5.132 --port 1005 --disable-host-check",
+    "dmr": "ng serve --open --host 10.4.5.132 --port 1000 --disable-host-check",
     "ng": "ng",
     "dev": "ng serve --open",
     "postinstall": "ngcc --properties es2015 browser module main --first-only",
@@ -33,7 +33,7 @@
   "private": true,
 
   "dependencies": {
-  "@angular/animations": "^11.2.5",
+    "@angular/animations": "^11.2.5",
     "@angular/cdk": "^11.2.4",
     "@angular/common": "^11.2.5",
     "@angular/compiler": "^11.2.5",
@@ -126,7 +126,7 @@
     "web-animations-js": "^2.3.2",
     "zone.js": "~0.10.3"
   },
-
+  
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.1102.4",
     "@angular/cli": "^11.2.4",

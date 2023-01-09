@@ -15,7 +15,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class OcService {
-  baseUrl = environment.api_login_Url;
+  baseUrl = environment.apiUrl;
   messageSource = new BehaviorSubject<number>(0);
   currentMessage = this.messageSource.asObservable();
   // method này để change source message

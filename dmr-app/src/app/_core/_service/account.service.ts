@@ -19,7 +19,7 @@ const httpOptions = {
 })
 export class AccountService {
   baseUrl = environment.apiUrlEC;
-  authUrl = environment.api_login_Url;
+  authUrl = environment.apiUrl;
   messageSource = new BehaviorSubject<number>(0);
   currentMessage = this.messageSource.asObservable();
   // method này để change source message

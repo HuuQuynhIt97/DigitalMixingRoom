@@ -22,8 +22,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" *ngFor="let subItem of item.children"
-               [routerLink]="[ subItem.url]">{{ subItem.code | translate }}
-              </a>
+               [routerLink]="[ subItem.url]">{{ subItem.code | translate }}</a>
             </div>
           </li>
       </ul>

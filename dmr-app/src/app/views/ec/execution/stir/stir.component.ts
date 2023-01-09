@@ -101,6 +101,7 @@ export class StirComponent implements OnInit, OnDestroy {
     this.getAllSetting();
     this.onRouteChange();
     this.checkQRCode();
+    this.signal();
 
   }
 
@@ -108,7 +109,6 @@ export class StirComponent implements OnInit, OnDestroy {
     this.subscription.push(this.subject
       .pipe(debounceTime(500)).subscribe(async (res) => {
         try {
-          this.signal();
           const check = this.stirData.every(x => x.actualDuration > 0);
           // if (check === true) {
           //   this.alertify.warning('The glue has been stired <br> Keo này đã được khuấy', true);
@@ -133,18 +133,20 @@ export class StirComponent implements OnInit, OnDestroy {
           }
           const data = await this.getStirByMixingInfoID(this.mixingInfoID);
           this.stirData = data;
-          console.log('stirData', data);
           this.getStandardRPMAndDuration();
         } catch (error) {
           this.alertify.error('QR Code invalid!', true);
         }
-      }));
+    }));
   }
+  
   private signal() {
     this.stirService.receiveAmount.subscribe(res => {
-      // const rpm = res.rpm;
-      this.numberRPM = res.rpm;
       console.log(res);
+      // const rpm = res.rpm;
+      if(res !== null) {
+        this.numberRPM = res.rpm;
+      }
     });
   }
   onRouteChange() {

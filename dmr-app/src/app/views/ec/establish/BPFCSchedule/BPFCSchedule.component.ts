@@ -56,7 +56,7 @@ export class BPFCScheduleComponent extends BaseComponent implements OnInit, OnDe
   @ViewChildren('tooltip') tooltip: QueryList<any>;
 
   pageSettings = {
-    pageCount: 200,
+    pageCount: 20,
     pageSizes: [50, 100, 150, 200, 'All'],
     pageSize: 50,
   };
@@ -500,8 +500,8 @@ export class BPFCScheduleComponent extends BaseComponent implements OnInit, OnDe
     this.modelNameID = data.modelNameID;
     this.modelNoID = data.modelNoID;
     console.log(data);
-    this.articleNoID = data.articleNoID;
     this.bpfc_destination = data.id;
+    this.articleNoID = data.articleNoID;
     // this.artProcessID = data.artProcessID;
     this.getArticleNoByModelNoID(this.modelNoID, data.articleNo);
     if (data.artProcess === 'ASY') {

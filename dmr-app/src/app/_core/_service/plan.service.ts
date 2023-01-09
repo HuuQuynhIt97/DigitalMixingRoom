@@ -20,6 +20,15 @@ export class PlanService {
   constructor(
     private http: HttpClient
   ) { }
+
+  consumptionReportDone(buildingID: number, startDate: Date, endDate: Date) {
+    const params = { buildingID, startDate, endDate};
+    return this.http.post<Consumtion[]>(this.baseUrl + 'Plan/reportDoneList', params);
+  }
+  reportDoneList(buildingID: number, startDate: Date, endDate: Date) {
+    const params = { buildingID, startDate, endDate };
+    return this.http.post(this.baseUrl + 'Plan/ExportExcelDoneList', params, { responseType: 'blob' });
+  }
   TroubleShootingSearch(value: string , batchValue: string) {
     return this.http.get(this.baseUrl + `Plan/TroubleShootingSearch/${value}/${batchValue}` );
   }
@@ -85,11 +94,6 @@ export class PlanService {
     const params = { buildingID, startDate, endDate};
     return this.http.post<Consumtion[]>(this.baseUrl + 'Plan/ConsumptionByLineCase1', params);
   }
-
-  consumptionReportDone(buildingID: number, startDate: Date, endDate: Date) {
-    const params = { buildingID, startDate, endDate};
-    return this.http.post<Consumtion[]>(this.baseUrl + 'Plan/reportDoneList', params);
-  }
   consumptionByLineCase2(buildingID: number, startDate: Date, endDate: Date) {
     const params = { buildingID, startDate, endDate };
     return this.http.post<Consumtion[]>(this.baseUrl + 'Plan/ConsumptionByLineCase2', params );
@@ -101,11 +105,6 @@ export class PlanService {
   reportConsumptionCase1(buildingID: number, startDate: Date, endDate: Date) {
     const params = { buildingID, startDate, endDate };
     return this.http.post(this.baseUrl + 'Plan/ReportConsumptionCase1', params, { responseType: 'blob' });
-  }
-
-  reportDoneList(buildingID: number, startDate: Date, endDate: Date) {
-    const params = { buildingID, startDate, endDate };
-    return this.http.post(this.baseUrl + 'Plan/ExportExcelDoneList', params, { responseType: 'blob' });
   }
   reportConsumptionCase2(buildingID: number, startDate: Date, endDate: Date) {
     const params = { buildingID, startDate, endDate };

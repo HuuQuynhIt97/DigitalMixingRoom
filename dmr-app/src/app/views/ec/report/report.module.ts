@@ -1,4 +1,3 @@
-import { ReportDoneComponent } from './report-done/report-done.component';
 import { CoreDirectivesModule } from './../../../_core/_directive/core.directives.module';
 // Angular
 import { CommonModule } from '@angular/common';
@@ -52,6 +51,7 @@ import { Consumption2Component } from "./consumption-2/consumption-2.component";
 import { Consumption3Component } from "./consumption-3/consumption-3.component";
 import { ConsumptionComponent } from "./consumption/consumption.component";
 import { InventoryComponent } from './inventory/inventory.component';
+import { ReportDoneComponent } from './report-done/report-done.component';
 
 declare var require: any;
 let defaultLang: string;

@@ -17,7 +17,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class ProjectDetailService {
-  baseUrl = environment.api_login_Url;
+  baseUrl = environment.apiUrl;
   titleManagerModal = 'Add Manager';
   constructor(private http: HttpClient) {}
   addManager(manager: Manager) {

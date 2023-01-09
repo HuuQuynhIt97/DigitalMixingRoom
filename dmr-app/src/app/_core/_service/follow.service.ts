@@ -16,7 +16,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class FollowService {
-  baseUrl = environment.api_login_Url;
+  baseUrl = environment.apiUrl;
   constructor(private http: HttpClient) {}
   getTasks() {
     return this.http.get(`${this.baseUrl}Follow/LoadFollow`).pipe(

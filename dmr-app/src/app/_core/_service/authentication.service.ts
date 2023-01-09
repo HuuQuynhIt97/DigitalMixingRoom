@@ -28,7 +28,7 @@ interface LoginResult {
   providedIn: 'root',
 })
 export class AuthenticationService implements OnDestroy {
-  baseUrl = environment.api_login_Url + 'auth/login';
+  baseUrl = environment.apiUrl + 'auth/login';
   jwtHelper = new JwtHelperService();
   currentUser: User;
   roleValue = new BehaviorSubject<IRole>({ id: 0, name: '' });
@@ -41,7 +41,7 @@ export class AuthenticationService implements OnDestroy {
   levelSource = new BehaviorSubject<any>({});
   currentLevel = this.levelSource.asObservable();
 
-  private readonly api_login_Url = `${environment.api_login_Url}account`;
+  private readonly apiUrl = `${environment.apiUrl}account`;
   private timer: Subscription;
   // tslint:disable-next-line:variable-name
   private _user = new BehaviorSubject<ApplicationUser>(null);
@@ -62,7 +62,7 @@ export class AuthenticationService implements OnDestroy {
       }
       if (event.key === 'login-event') {
         this.stopTokenTimer();
-        // this.http.get<LoginResult>(`${this.api_login_Url}/user`).subscribe((x) => {
+        // this.http.get<LoginResult>(`${this.apiUrl}/user`).subscribe((x) => {
         //   this._user.next(x as ApplicationUser);
         // });
       }
@@ -105,7 +105,7 @@ export class AuthenticationService implements OnDestroy {
 
   login(username: string, password: string) {
     return this.http
-      .post<LoginResult>(`${this.api_login_Url}/login`, { username, password })
+      .post<LoginResult>(`${this.apiUrl}/login`, { username, password })
       .pipe(
         map((x: any) => {
           const loginResult = x.loginResult as LoginResult;
@@ -127,7 +127,7 @@ export class AuthenticationService implements OnDestroy {
   }
   logout() {
     this.http
-      .post<unknown>(`${this.api_login_Url}/logout`, {})
+      .post<unknown>(`${this.apiUrl}/logout`, {})
       .pipe(
         finalize(() => {
           this.clearLocalStorage();
@@ -149,7 +149,7 @@ export class AuthenticationService implements OnDestroy {
     }
 
     return this.http
-      .post<LoginResult>(`${this.api_login_Url}/refresh-token`, { refreshToken })
+      .post<LoginResult>(`${this.apiUrl}/refresh-token`, { refreshToken })
       .pipe(
         catchError(() => of([])),
         map((x: LoginResult) => {

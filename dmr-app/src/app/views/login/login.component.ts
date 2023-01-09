@@ -62,7 +62,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
   role: number;
   ngOnInit(): void {
-    
     const accessToken = localStorage.getItem('token');
     const refreshToken = localStorage.getItem('refresh_token');
     if (accessToken && refreshToken && this.route.routeConfig.path === 'login') {

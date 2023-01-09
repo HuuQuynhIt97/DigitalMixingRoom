@@ -17,7 +17,7 @@ import { ResponseDetail } from '../_model/responseDetail';
   providedIn: 'root'
 })
 export class AuthService {
-  baseUrl = environment.api_login_Url + 'auth/login';
+  baseUrl = environment.apiUrl + 'auth/login';
   jwtHelper = new JwtHelperService();
   currentUser: User;
   roleValue = new BehaviorSubject<IRole>({ id: 0, name: '' });

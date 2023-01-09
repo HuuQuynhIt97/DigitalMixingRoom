@@ -103,7 +103,7 @@ export class DispatchComponent implements OnInit {
     this.todolistService.getDispatchDetail(this.value.buildingID, this.value.glueNameID,
       this.value.estimatedStartTime, this.value.estimatedFinishTime).subscribe((data: any) => {
         this.data = data;
-    });
+      });
   }
   finishDispatch() {
     const lines = this.data.map( x => {
@@ -116,10 +116,10 @@ export class DispatchComponent implements OnInit {
       lines
     };
     this.todolistService.finishDispatch(obj).subscribe((data: any) => {
-      this.todolistService.setValue(true);
-      this.alertify.success('Success');
-      this.activeModal.dismiss();
-    });
+        this.todolistService.setValue(true);
+        this.alertify.success('Success');
+        this.activeModal.dismiss();
+      });
   }
   updateDispatchDetail(obj) {
     this.todolistService.updateDispatchDetail(obj).subscribe((res: any) => {
