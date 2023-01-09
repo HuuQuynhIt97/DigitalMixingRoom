@@ -1,0 +1,22 @@
+
+  /* .inventory-body {
+     position: fixed;
+     min-width: 100%;
+     background-image: url("/assets/img/SSB-background.jpg");
+     background-repeat: no-repeat;
+     background-size: 100%;
+     background-position: center;
+     background-size: cover;
+     } */
+
+     :host {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("/assets/img/SSB-background.jpg");
+  /* background-image: url("/assets/img/SPC.jpg"); */
+  /* background-image: url("/assets/img/TSH.jpg"); */
+  /* background-image: url("/assets/img/CB.jpg"); */
+}

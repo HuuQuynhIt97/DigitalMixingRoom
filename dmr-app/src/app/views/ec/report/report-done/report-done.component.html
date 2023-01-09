@@ -1,0 +1,326 @@
+<ngx-spinner [fullScreen]="false" type="square-jelly-box" size="medium">
+  <p class="loading">Loading data...</p>
+</ngx-spinner>
+<div class="row pt-2">
+  <div class="col-md-12 ">
+    <div class="card">
+      <div class="card-body p-0">
+          <div class="row my-3">
+            <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-1">
+                    <div class="font-weight-bold">{{'FILTER_LABEL' | translate}}:</div>
+                  </div>
+                  <div class="col-md-3">
+                    <ejs-datepicker [value]='startDate' (change)='startDateOnchange($event)' [(ngModel)]='startDate'>
+                    </ejs-datepicker>
+                  </div>
+                  <div class="col-md-3">
+                    <ejs-datepicker [value]='endDate' (change)='endDateOnchange($event)' [(ngModel)]='endDate'>
+                    </ejs-datepicker>
+                  </div>
+                  <div class="col-md-2">
+                    <ejs-dropdownlist #modelNameDropdownlist [dataSource]='buildings' [fields]='fieldsBuildings' [allowFiltering]='true'
+                      [value]='buildingID' (filtering)='onFilteringBuilding($event)' (change)='onChangeBuilding($event)'
+                      placeholder="Select a building">
+                    </ejs-dropdownlist>
+                  </div>
+                  <div class="col-md-2">
+                    <button class="btn btn-sm btn-secondary" (click)='onClickDefault()'>
+                      <i class="fa fa-times"></i>
+                    </button>
+                    <!-- <button class="btn btn-sm btn-default" (click)='buildingID = 8'>
+                      <i class="fa fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+            </div>
+          </div>
+        <ejs-grid #grid [dataSource]='data' id='grid'
+          [searchSettings]="searchSettings"
+          [showColumnMenu]='true'
+          [allowPaging]='true'
+          [allowSorting]='true'
+          [allowResizing]='true'
+          gridLines='Both'
+          (dataBound)='dataBound()'
+          (queryCellInfo)='queryCellInfoEvent($event)'
+          (headerCellInfo)='headerCellInfo($event)'
+          [toolbar]='toolbarOptions'
+          (toolbarClick)='toolbarClick($event)'
+          [sortSettings]='sortSettings'
+          [pageSettings]='pageSettings'>
+          <e-columns>
+            <e-column field='jobType' headerText='Job Type' width='100' textAlign='Center'>
+              <ng-template #headerTemplate>
+                {{ 'Job Type' | translate }}
+              </ng-template>
+              <ng-template #template let-data>
+                {{ (data.jobType == 1 ? 'Todo' : 'Dispatch') | translate}}
+                <span>{{data.abnormalStatus === true ? '- ' : ''}}</span>
+                <span>{{(data.abnormalStatus === true ? 'Addition' : '') | translate}}</span>
+              </ng-template>
+            </e-column>
+          <e-column field='supplier' headerText='Supplier' width='100' textAlign='Center'>
+            <ng-template #headerTemplate>
+              {{ 'Supplier' | translate }}
+            </ng-template>
+          </e-column>
+          <e-column field='glueName' headerText='Glue' width='170' textAlign='Left'>
+            <ng-template #headerTemplate>
+              {{ 'Glue' | translate }}
+            </ng-template>
+            <!-- <ng-template #template let-data>
+              <ejs-tooltip #tooltip class="fix-css" position='RightCenter'
+                (beforeRender)="onBeforeRender($event, data, data.index)" content="loading...">
+                {{data.glueName}}
+              </ejs-tooltip>
+            </ng-template> -->
+          </e-column>
+          <e-column field='lines' headerText='Line' width='170' textAlign='Left'>
+            <ng-template #headerTemplate>
+              {{ 'Line' | translate }}
+            </ng-template>
+            <ng-template #template let-data>
+              {{data.lineNames.join(', ')}}
+            </ng-template>
+          </e-column>
+          <e-column field='startMixingTime' type='date' format='HH:mm' headerText='SMT' width='160' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'SMT_Tooltip' | translate">
+                {{ 'SMT' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+              <div *ngIf="data.jobType == 1">
+                {{data.glueName.indexOf(' + ') === -1 || data.startMixingTime === null || data.startMixingTime ===
+                "0001-01-01T00:00:00" ? 'N/A':
+                data.startMixingTime | date: 'HH:mm'}}
+              </div>
+              <div *ngIf="data.jobType == 2">
+                -
+              </div>
+            </ng-template>
+          </e-column>
+          <e-column field='finishMixingTime' type='date' format='HH:mm' headerText='FMT' width='160' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'FMT_Tooltip' | translate">
+                {{ 'FMT' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+
+                <div *ngIf="data.jobType == 1">
+                  {{data.glueName.indexOf(' + ') === -1 || data.finishMixingTime === null || data.finishMixingTime ===
+                  "0001-01-01T00:00:00" ? 'N/A':
+                  data.finishMixingTime | date: 'HH:mm'}}
+                </div>
+                  <div *ngIf="data.jobType == 2">
+                    -
+                  </div>
+            </ng-template>
+          </e-column>
+
+          <e-column field='startStirTime' type='date' format='HH:mm' headerText='SST' width='160' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'SST_Tooltip' | translate">
+                {{ 'SST' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+              <div *ngIf="data.jobType == 1">
+                  <ng-container *ngIf="data.glueName.indexOf(' + ') !== -1 && data.mixedConsumption < 1 ;else second">
+                    {{'Manual' | translate}}
+                  </ng-container>
+                  <ng-template #second>
+                    <ng-container
+                      *ngIf="data.glueName.indexOf(' + ') !== -1 && data.startStirTime !== null && data.finishStirTime !== null && data.mixedConsumption >= 1; else third">
+                      {{data.startStirTime | date: 'HH:mm'}}
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #third>
+                    <ng-container
+                      *ngIf="data.glueName.indexOf(' + ') !== -1 && data.startStirTime === null && data.mixedConsumption >= 1;else four">
+                      Error
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #four>
+                    N/A
+                  </ng-template>
+              </div>
+              <div *ngIf="data.jobType == 2">
+                -
+              </div>
+
+            </ng-template>
+          </e-column>
+          <e-column field='finishStirTime' type='date' format='HH:mm' headerText='FST' width='160' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'FST_Tooltip' | translate">
+                {{ 'FST' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+
+            <ng-template #template let-data>
+              <div *ngIf="data.jobType == 1">
+                <ng-container *ngIf="data.glueName.indexOf(' + ') !== -1 && data.mixedConsumption < 1 ;else second">
+                  {{'Manual' | translate}}
+                </ng-container>
+                <ng-template #second>
+                  <ng-container
+                    *ngIf="data.glueName.indexOf(' + ') !== -1 && data.startStirTime !== null && data.finishStirTime !== null && data.mixedConsumption >= 1; else third">
+                    {{data.finishStirTime | date: 'HH:mm'}}
+                  </ng-container>
+                </ng-template>
+                <ng-template #third>
+                  <ng-container
+                    *ngIf="data.glueName.indexOf(' + ') !== -1 && data.startStirTime === null && data.mixedConsumption >= 1;else four">
+                    Error
+                  </ng-container>
+                </ng-template>
+                <ng-template #four>
+                  N/A
+                </ng-template>
+              </div>
+              <div *ngIf="data.jobType == 2">
+                -
+              </div>
+
+            </ng-template>
+          </e-column>
+
+          <e-column field='standardRPM'  headerText='Std. RPM' width='160' textAlign='Center'></e-column>
+
+          <e-column field='actualRPM'  headerText='Average RPM' width='160' textAlign='Center'></e-column>
+
+          <e-column field='standardDuration'  headerText='Std. Duration' width='160' textAlign='Center'>
+            <ng-template #template let-data>
+              <span>{{transform(data.standardDuration)}}</span>
+            </ng-template>
+
+          </e-column>
+
+          <e-column field='actualDuration'  headerText='Actual Duration' width='160' textAlign='Center'>
+            <ng-template #template let-data>
+              <span>{{transform(data.actualDuration)}}</span>
+            </ng-template>
+          </e-column>
+
+          <e-column field='printTime' type='date' format='HH:mm' headerText='PT' width='160' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'PT_Tooltip' | translate">
+                {{ 'PT' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+          </e-column>
+          <e-column field='dispatchTime' type='date' format='HH:mm' headerText='SDT' width='160'
+            textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'SDT_Tooltip' | translate">
+                {{ 'SDT' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+              <div *ngIf="data.jobType == 1">
+                -
+              </div>
+              <div *ngIf="data.jobType == 2">
+                {{data.finishDispatchingTime === null ? 'N/A': data.finishDispatchingTime | date: 'HH:mm'}}
+              </div>
+            </ng-template>
+          </e-column>
+          <!-- <e-column field='finishDispatchingTime' type='date' format='HH:mm' headerText='FDT' width='160'
+            textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'FDT_Tooltip' | translate">
+                {{ 'FDT' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+              {{data.finishDispatchingTime === null ? 'N/A': data.finishDispatchingTime | date: 'HH:mm'}}
+            </ng-template>
+          </e-column> -->
+
+
+          <e-column field='standardConsumption' headerText='Std. Con.' width='100' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip content='Standard Consumption'>
+                {{ 'Std. Con.' | translate }} (kg)
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+                <div *ngIf="data.jobType == 2">
+                  -
+                </div>
+                <div *ngIf="data.jobType == 1">
+                  {{data.standardConsumption}}
+                </div>
+            </ng-template>
+          </e-column>
+          <e-column field='mixedConsumption' headerText='Mixed. Con.' width='100' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip content='Mixing Consumption'>
+                {{ 'Mixed. Con.' | translate }}(kg)
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+              <div *ngIf="data.jobType == 2">
+                -
+              </div>
+              <div *ngIf="data.jobType == 1">
+                {{data.glueName.indexOf(' + ') !== -1 ? data.mixedConsumption + '' : 'N/A'}}
+              </div>
+            </ng-template>
+          </e-column>
+          <e-column field='deliveredAmount' headerText='Delivered. Con.' width='100' textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip content='Delivered Consumption'>
+                {{ 'Delivered. Con.' | translate }}(kg)
+              </ejs-tooltip>
+            </ng-template>
+            <ng-template #template let-data>
+              <div *ngIf="data.jobType == 1">
+                -
+              </div>
+              <div *ngIf="data.jobType == 2">
+                {{data.deliveredAmount}}
+              </div>
+            </ng-template>
+          </e-column>
+
+          <!-- <e-column field='status' headerText='Status' width='100' textAlign='Center'>
+          <ng-template #headerTemplate>
+            <ejs-tooltip [content]="'Status_Tooltip' | translate">
+              {{ 'Status' | translate }}
+            </ejs-tooltip>
+          </ng-template>
+          <ng-template #template let-data>
+            <span class="badge" [class.bg-success]='data.status === true'
+              [class.bg-danger]='data.status === false'>{{data.status + '' | translate }}</span>
+          </ng-template>
+        </e-column> -->
+
+          <e-column field='estimatedStartTime' type='date' format='HH:mm' headerText='EST' width='160'
+            textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'EST_Tooltip' | translate">
+                {{ 'EST' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+          </e-column>
+          <e-column field='estimatedFinishTime' type='date' format='HH:mm' headerText='EFT' width='160'
+            textAlign='Center'>
+            <ng-template #headerTemplate>
+              <ejs-tooltip [content]="'EFT_Tooltip' | translate">
+                {{ 'EFT' | translate }}
+              </ejs-tooltip>
+            </ng-template>
+          </e-column>
+          </e-columns>
+        </ejs-grid>
+      </div>
+
+    </div>
+  </div>
+</div>
+
